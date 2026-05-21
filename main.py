@@ -3,6 +3,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor 
+from sklearn.model_selection import cross_val_score 
 # from xgboost import XGBRegressor 
 
 df = pd.read_csv("data/ames.csv")
@@ -22,7 +23,13 @@ y = df["SalePrice"]
 # ML models 
 
 # model = LinearRegression() 
-model = RandomForestRegressor(random_state=42)
+# model and hyperparameter tuning 
+model = RandomForestRegressor(
+    n_estimators=300,
+    max_depth=10,
+    min_samples_split=5,
+    random_state=42)
+
 # model = XGBRegressor(random_state=42) # compatiblity error occured on this line 
 
 X_train , X_test , y_train , y_test = train_test_split(X , y , test_size=0.2 , random_state=42)
@@ -31,6 +38,13 @@ prediction = model.predict(X_test)
 
 mae = mean_absolute_error(y_test , prediction)
 print(mae)
+
+# Cross-validation scores 
+scores = cross_val_score(model , X , y , scoring="neg_mean_absolute_error", cv=5)
+
+mae_scores = -scores
+print(mae_scores.mean())
+
 
 # which features influence house prices the most 
 
