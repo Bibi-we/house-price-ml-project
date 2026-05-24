@@ -61,18 +61,31 @@ print(feature_importance.head(10))
 # visualising the top features 
 top_features = feature_importance.head(10)
 
-plt.figure(figsize=(10, 6))
-plt.barh(
-    top_features["Feature"],
-    top_features["Importance"]
-)
+# plt.figure(figsize=(10, 6))
+# plt.barh(
+    #top_features["Feature"],
+   # top_features["Importance"]
+# )
 
-plt.xlabel("Importance")
-plt.ylabel("Features")
-plt.title("Top 10 Important Features")
+# plt.xlabel("Importance")
+# plt.ylabel("Features")
+# plt.title("Top 10 Important Features")
 
-plt.gca().invert_yaxis() # Invert y-axis to have the most important feature at the top
-plt.savefig("feature_importance.png") # Save the plot as an image file 
+# plt.gca().invert_yaxis() # Invert y-axis to have the most important feature at the top
+# plt.savefig("feature_importance.png") # Save the plot as an image file 
+# plt.show()
+
+# predicted vs actual scatter plot
+
+plt.figure(figsize=(8, 8))
+
+plt.scatter(y_test, prediction)
+
+plt.xlabel("Actual Sale Price")
+plt.ylabel("Predicted Sale Price")
+
+plt.title("Actual vs Predicted House Price")
+plt.savefig("actual_vs_predicted.png") # Save the plot as an image file
 plt.show()
 
 
