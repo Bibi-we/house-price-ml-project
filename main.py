@@ -13,6 +13,12 @@ import seaborn as sns
 # load the dataset and perform feature engineering 
 df = pd.read_csv("data/ames.csv")
 
+# =========== Missing Value Handling ===========
+# =========== Filling missing numerical values with median ===========
+numerical_cols = df.select_dtypes(include=["int64", "float64"]).columns
+for col in numerical_cols:
+    df[col] = df[col].fillna(df[col].median())
+   
 # One-hot encode categorical values 
 df = pd.get_dummies(df, columns=["Neighborhood"], drop_first=True)
 
@@ -71,17 +77,17 @@ print(feature_importance.head(10))
 # visualising the top features/based on Features importance 
 top_features = feature_importance.head(10)
 
-# plt.figure(figsize=(10, 6))
-# plt.barh(
-    #top_features["Feature"],
-   # top_features["Importance"]
-# )
-# plt.xlabel("Importance")
-# plt.ylabel("Features")
-# plt.title("Top 10 Important Features")
-# plt.gca().invert_yaxis() # Invert y-axis to have the most important feature at the top
-# plt.savefig("feature_importance.png") # Save the plot as an image file 
-# plt.show()
+plt.figure(figsize=(10, 6))
+plt.barh(
+    top_features["Feature"],
+   top_features["Importance"]
+)
+plt.xlabel("Importance")
+plt.ylabel("Features")
+plt.title("Top 10 Important Features")
+plt.gca().invert_yaxis() # Invert y-axis to have the most important feature at the top
+plt.savefig("feature_importance.png") # Save the plot as an image file 
+plt.show()
 
 
 ### predicted vs actual scatter plot ###
@@ -116,7 +122,8 @@ plt.title("Correlation Heatmap")
 plt.savefig("correlation_heatmap.png") # Save the plot as an image file 
 plt.show()
 
-
+# print(df.isnull().sum()) ==== temporary inspection/debugging step of missing values,
+# had to comment out correlation heatmap and feature importance plot and vice versa 
 
 ### Exploratory Data Analysis (EDA) , useful dataset & inspection commands ###
 
