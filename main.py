@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import cross_val_score 
 import matplotlib.pyplot as plt 
 import seaborn as sns 
+from sklearn.model_selection import GridSearchCV 
 
 # from xgboost import XGBRegressor 
 
@@ -39,18 +40,39 @@ y = df["SalePrice"]
 # baseline linear regression model 
 # model = LinearRegression() 
 
-# random forest model and hyperparameter tuning 
-model = RandomForestRegressor(
-    n_estimators=300,
-    max_depth=10,
-    min_samples_split=5,
-    random_state=42)
+# random forest model and automated hyperparameter tuning 
+
+# Train/Test split
+X_train , X_test , y_train , y_test = train_test_split(X , y , test_size=0.2 , random_state=42)
+# base model
+rf = RandomForestRegressor(random_state=42)
+
+# Hyperparameter grid 
+param_grid = {
+    "n_estimators": [100, 200],
+    "max_depth": [10, 20],
+    "min_samples_split": [2, 5]
+}
+
+# Grid search 
+grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring="neg_mean_absolute_error",
+                           n_jobs=-1)
+
+grid_search.fit(X_train, y_train)
+
+
+
+# Best model after hyperparameter tuning
+model = grid_search.best_estimator_
+
+print("Best Parameters:", grid_search.best_params_)
+print("Best CV Score:", grid_search.best_score_)
 
 # XGBoost model 
 # model = XGBRegressor(random_state=42) # currently disabled due to compatibility error
 
 # Train/Test split
-X_train , X_test , y_train , y_test = train_test_split(X , y , test_size=0.2 , random_state=42)
+# X_train , X_test , y_train , y_test = train_test_split(X , y , test_size=0.2 , random_state=42)
 
 # Model Training/Fit the Model
 model.fit(X_train , y_train)
@@ -67,27 +89,27 @@ print(mae_scores.mean())
 
 
 # Feature Importance Analysis -which features influence house prices the most 
-importance = model.feature_importances_
-feature_importance = pd.DataFrame({"Feature": X.columns, "Importance": importance})
+# importance = model.feature_importances_
+# feature_importance = pd.DataFrame({"Feature": X.columns, "Importance": importance})
 
-feature_importance = feature_importance.sort_values(by="Importance", ascending=False)
+# feature_importance = feature_importance.sort_values(by="Importance", ascending=False)
 
-print(feature_importance.head(10))
+# print(feature_importance.head(10))
 
 # visualising the top features/based on Features importance 
-top_features = feature_importance.head(10)
+# top_features = feature_importance.head(10)
 
-plt.figure(figsize=(10, 6))
-plt.barh(
-    top_features["Feature"],
-   top_features["Importance"]
-)
-plt.xlabel("Importance")
-plt.ylabel("Features")
-plt.title("Top 10 Important Features")
-plt.gca().invert_yaxis() # Invert y-axis to have the most important feature at the top
-plt.savefig("feature_importance.png") # Save the plot as an image file 
-plt.show()
+# plt.figure(figsize=(10, 6))
+# plt.barh(
+#     top_features["Feature"],
+#    top_features["Importance"]
+# )
+# plt.xlabel("Importance")
+# plt.ylabel("Features")
+# plt.title("Top 10 Important Features")
+# plt.gca().invert_yaxis() # Invert y-axis to have the most important feature at the top
+# plt.savefig("feature_importance.png") # Save the plot as an image file 
+# plt.show()
 
 
 ### predicted vs actual scatter plot ###
@@ -105,22 +127,22 @@ plt.show()
 
 
 # Correlation heatmap for exploring relationships between features
-correlation = df [[
-    "SalePrice",
-    "TotalSF",
-    "GarageCars",
-    "GarageArea",
-    "YearBuilt",
-    "FullBath",
-    "LotArea"
-]].corr()
+# correlation = df [[
+#     "SalePrice",
+#     "TotalSF",
+#     "GarageCars",
+#     "GarageArea",
+#     "YearBuilt",
+#     "FullBath",
+#     "LotArea"
+# ]].corr()
 
-plt.figure(figsize=(10, 8))
-sns.heatmap(correlation, annot=True, cmap="coolwarm")
+# plt.figure(figsize=(10, 8))
+# sns.heatmap(correlation, annot=True, cmap="coolwarm")
 
-plt.title("Correlation Heatmap")
-plt.savefig("correlation_heatmap.png") # Save the plot as an image file 
-plt.show()
+# plt.title("Correlation Heatmap")
+# plt.savefig("correlation_heatmap.png") # Save the plot as an image file 
+# plt.show()
 
 # print(df.isnull().sum()) ==== temporary inspection/debugging step of missing values,
 # had to comment out correlation heatmap and feature importance plot and vice versa 
