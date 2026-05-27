@@ -87,6 +87,26 @@ model.fit(X_train , y_train)
 
 # prediction and evaluation 
 prediction = model.predict(X_test)
+
+# residual analysis 
+residuals = y_test - prediction
+print(residuals.head())
+
+# residual visualization 
+plt.figure(figsize=(8, 6))
+
+plt.scatter(prediction, residuals)
+
+plt.axhline(y=0, color='red', linestyle='--')
+
+plt.xlabel("Predicted Prices")
+plt.ylabel("Residuals")
+
+plt.title("Residual Plot")
+
+plt.savefig("residual_plot.png") # Save the plot as an image file
+plt.show()
+
 mae = mean_absolute_error(y_test , prediction)
 print(mae)
 
