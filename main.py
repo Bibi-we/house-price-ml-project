@@ -44,35 +44,43 @@ y = df["SalePrice"]
 
 # Train/Test split
 X_train , X_test , y_train , y_test = train_test_split(X , y , test_size=0.2 , random_state=42)
+
 # base model
 rf = RandomForestRegressor(random_state=42)
 
+model = RandomForestRegressor(
+    n_estimators=200,  # number of trees in the forest
+    max_depth=20,      # maximum depth of the trees
+    min_samples_split=5, # minimum samples required to split an internal node
+    random_state=42
+)
+
 # Hyperparameter grid 
-param_grid = {
-    "n_estimators": [100, 200],
-    "max_depth": [10, 20],
-    "min_samples_split": [2, 5]
-}
+# param_grid = {
+#     "n_estimators": [100, 200],
+#     "max_depth": [10, 20],
+#     "min_samples_split": [2, 5]
+# }
 
 # Grid search 
-grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring="neg_mean_absolute_error",
-                           n_jobs=-1)
+# grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring="neg_mean_absolute_error",
+#                            n_jobs=-1)
 
-grid_search.fit(X_train, y_train)
+# grid_search.fit(X_train, y_train)
 
 
 
 # Best model after hyperparameter tuning
-model = grid_search.best_estimator_
+# model = grid_search.best_estimator_
 
-print("Best Parameters:", grid_search.best_params_)
-print("Best CV Score:", grid_search.best_score_)
+# print("Best Parameters:", grid_search.best_params_)
+# print("Best CV Score:", grid_search.best_score_)
 
 # XGBoost model 
 # model = XGBRegressor(random_state=42) # currently disabled due to compatibility error
 
-# Train/Test split
-# X_train , X_test , y_train , y_test = train_test_split(X , y , test_size=0.2 , random_state=42)
+
+
 
 # Model Training/Fit the Model
 model.fit(X_train , y_train)
@@ -146,6 +154,9 @@ print(mae_scores.mean())
 
 # print(df.isnull().sum()) ==== temporary inspection/debugging step of missing values,
 # had to comment out correlation heatmap and feature importance plot and vice versa 
+
+
+
 
 ### Exploratory Data Analysis (EDA) , useful dataset & inspection commands ###
 
