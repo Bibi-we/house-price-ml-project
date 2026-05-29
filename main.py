@@ -61,6 +61,8 @@ gbr_model = GradientBoostingRegressor(random_state=42)
 #### Train/Test split #### 
 X_train , X_test , y_train , y_test = train_test_split(X , y , test_size=0.2 , random_state=42)
 
+###=== creating a results list###===
+results = []
 #### reusable evalution function #### 
 def evaluate_model(model, model_name):
     
@@ -79,11 +81,37 @@ def evaluate_model(model, model_name):
     print(f"Cross-Validation MAE: {cv_mae:.2f}")
     print("---------------------")
 
+####=== storing results Dictionary###===
+    results.append({
+        "Model": model_name,
+        "Train/Test MAE": mae,
+        "Cross-Validation MAE": cv_mae
+    })
+
 #====== Runing All Models for Comparison ======
 
 evaluate_model(lr_model, "Linear Regression")
 evaluate_model(rf_model, "Random Forest")
 evaluate_model(gbr_model, "Gradient Boosting Regressor")
+
+###=== creating a DataFrame for results ===
+results_df = pd.DataFrame(results)
+print(results_df)
+
+###=== Visualizing Results ===
+
+plt.figure(figsize=(10, 6))
+
+plt.bar(
+    results_df["Model"],
+    results_df["Cross-Validation MAE"]
+)
+plt.xlabel("Models")
+plt.ylabel("Cross-Validation MAE")
+plt.title("Model Comparison")
+
+plt.savefig("model_comparison.png") # Save the plot as an image file
+plt.show() 
 
 ####=== base model ###=== 
 
